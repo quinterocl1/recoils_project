@@ -66,9 +66,9 @@ const SignUpTwoPage = () =>{
         Solo falta un último paso...
         </Typography>
         <Stack direction="row" gap={2}> 
-          <TextField fullWidth label="Contraseña" variant="outlined" defaultValue="Small"
+          <TextField fullWidth label="Contraseña" variant="outlined" 
           size="small" />
-          <TextField fullWidth label="Confirmar contraseña" variant="outlined" defaultValue="Small"
+          <TextField fullWidth label="Confirmar contraseña" variant="outlined" 
           size="small" />
         </Stack>
              
