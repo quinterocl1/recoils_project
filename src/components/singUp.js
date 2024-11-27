@@ -12,7 +12,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from './context/AuthContext'; // Ajusta la ruta según tu estructura de archivos
+import { useAuth } from '../context/AuthContext'; // Ajusta la ruta según tu estructura de archivos
 
 const SignUpPage = () => {
   const navigate = useNavigate();

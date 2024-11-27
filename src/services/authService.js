@@ -6,7 +6,11 @@ const register = (userData) => {
   return axios.post(`${API_URL}/register`, userData);
 };
 
+const login = (userData) => {
+  return axios.post(`${API_URL}/login`, userData);
+};
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   register,
+  login,
 };

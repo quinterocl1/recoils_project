@@ -9,8 +9,8 @@ import {
   Stack,
 } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from './context/AuthContext'; // Ajusta la ruta según tu estructura de archivos
-import authService from './services/authService'; // Ajusta la ruta según tu estructura de archivos
+import { useAuth } from '../context/AuthContext'; // Ajusta la ruta según tu estructura de archivos
+import authService from '../services/authService'; // Ajusta la ruta según tu estructura de archivos
 
 const SignUpTwoPage = () => {
   const navigate = useNavigate();
@@ -48,7 +48,7 @@ const SignUpTwoPage = () => {
 
       console.log("Datos enviados al backend:", completeUserData); // Agrega este console.log
       await authService.register(completeUserData); // Enviar todos los datos al endpoint
-      navigate("/");
+      navigate("/clientPage");
     } catch (error) {
       console.error("Error al registrar:", error);
     }
