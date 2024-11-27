@@ -72,23 +72,26 @@ const SignUpPage = () => {
         >
           Bienvenido, registrate para realizar tu primera recolección
         </Typography>
-        <Stack direction="row" gap={2}>
-          <TextField fullWidth label="Nombre/Razón Social" variant="outlined" defaultValue=""
-            size="small" />
-          <TextField fullWidth label="Cc/Nit" variant="outlined" defaultValue=""
-            size="small" />
-        </Stack>
-        <Stack direction="row" gap={2} >
-          <TextField fullWidth label="Correo Electrónico" variant="outlined" defaultValue=""
-            size="small" />
-          <TextField fullWidth label="Número de Teléfono" variant="outlined" defaultValue=""
-            size="small" />
-        </Stack>
-        <Stack direction="row" gap={2} >
-          <TextField fullWidth label="Dirección" variant="outlined" defaultValue=""
-            size="small" />
-        </Stack>
-        <Stack direction="row" gap={2}>
+        <Stack direction="column" gap={3} sx={12}>
+          <Stack direction='row' gap={3}>
+            <TextField
+            fullWidth
+            label="Nombre/Razón Social"
+            variant="outlined"
+            size="small"
+            />
+
+            <TextField fullWidth label="Cc/Nit" variant="outlined" size="small" /> 
+          </Stack>
+
+          <Stack direction='row' gap={3}>
+            <TextField fullWidth label="Correo Electrónico" variant="outlined" size="small" />
+            
+            <TextField fullWidth label="Número de Teléfono" variant="outlined" size="small" />
+            </Stack>
+
+            <Stack direction='row' gap={3}>
+            <TextField fullWidth label="Dirección" variant="outlined" size="small" />
           <FormControl fullWidth size="small">
             <InputLabel>Tipo de Cliente</InputLabel>
             <Select label="Tipo de Cliente" defaultValue="">
@@ -96,7 +99,10 @@ const SignUpPage = () => {
               <MenuItem value="natural">Natural</MenuItem>
             </Select>
           </FormControl>
-          <FormControl fullWidth size="small">
+            </Stack>
+
+            <Stack direction='row' gap={3}>
+            <FormControl fullWidth size="small">
             <InputLabel>Tipo de Establecimiento</InputLabel>
             <Select label="Tipo de Establecimiento" defaultValue="">
               <MenuItem value="restaurante">Restaurante</MenuItem>
@@ -104,6 +110,8 @@ const SignUpPage = () => {
               <MenuItem value="conjunto_residencial">Conjunto Residencial</MenuItem>
             </Select>
           </FormControl>
+            </Stack>
+          
         </Stack>
 
         <Button fullWidth variant="contained" color="primary" sx={{ py: 2 }} onClick={handleRedirectToSignUpTwo}>
