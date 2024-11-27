@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -9,15 +9,57 @@ import {
   Stack,
 } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from './context/AuthContext'; // Ajusta la ruta según tu estructura de archivos
+import authService from './services/authService'; // Ajusta la ruta según tu estructura de archivos
 
-const SignUpTwoPage = () =>{
-    const navigate = useNavigate();  // Hook para redirección
+const SignUpTwoPage = () => {
+  const navigate = useNavigate();
+  const { userData, updateUserData } = useAuth();
+  const [formData, setFormData] = useState({
+    password: '',
+    confirmPassword: '',
+  });
 
-    const handleRedirect = () => {
-      navigate("/");  // Redirige a la página de login
-    };
-    return(
-        <Container
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (formData.password !== formData.confirmPassword) {
+      alert("Las contraseñas no coinciden");
+      return;
+    }
+    try {
+      // Crear un objeto con los nombres de los campos correctos
+      const completeUserData = {
+        nombre: userData.name,
+        numero_identificacion: userData.ccNit,
+        email: userData.email,
+        contacto: userData.phone,
+        tipo_cliente: userData.clientType,
+        categoria: userData.establishmentType,
+        password: formData.password,
+      };
+
+      console.log("Datos enviados al backend:", completeUserData); // Agrega este console.log
+      await authService.register(completeUserData); // Enviar todos los datos al endpoint
+      navigate("/");
+    } catch (error) {
+      console.error("Error al registrar:", error);
+    }
+  };
+
+  const handleRedirect = () => {
+    navigate("/");
+  };
+
+  return (
+    <Container
       maxWidth="lg"
       sx={{
         height: "100vh",
@@ -41,7 +83,6 @@ const SignUpTwoPage = () =>{
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-           
           }}
         >
           <img
@@ -63,24 +104,39 @@ const SignUpTwoPage = () =>{
           color="textSecondary"
           sx={{ textAlign: "center" }}
         >
-        Solo falta un último paso...
+          Solo falta un último paso...
         </Typography>
-        <Stack direction="row" gap={2}> 
-          <TextField fullWidth label="Contraseña" variant="outlined" 
-          size="small" />
-          <TextField fullWidth label="Confirmar contraseña" variant="outlined" 
-          size="small" />
+        <Stack direction="row" gap={2}>
+          <TextField
+            fullWidth
+            label="Contraseña"
+            variant="outlined"
+            size="small"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            type="password"
+          />
+          <TextField
+            fullWidth
+            label="Confirmar contraseña"
+            variant="outlined"
+            size="small"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            type="password"
+          />
         </Stack>
-             
-        <Button fullWidth variant="contained" color="primary" sx={{ py: 2}}>
+        <Button fullWidth variant="contained" color="primary" sx={{ py: 2 }} onClick={handleSubmit}>
           Registarse
         </Button>
         <Link href="./forgotPassword" color="primary" sx={{ display: "block", mt: 1 }}>
-        ¿Ya tienes una cuena? Ingresa Aquí
-          </Link>
+          ¿Ya tienes una cuena? Ingresa Aquí
+        </Link>
       </Box>
     </Container>
-    )
-}
+  );
+};
 
 export default SignUpTwoPage;
