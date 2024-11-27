@@ -3,12 +3,14 @@ import {
   Box,
   Button,
   Container,
-  Link,
   TextField,
   Typography,
   Stack,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
-import IconRight from "@mui/icons-material/ArrowForward";
 import { useNavigate } from 'react-router-dom';
 
 
@@ -68,33 +70,50 @@ const SignUpPage = () => {
           color="textSecondary"
           sx={{ textAlign: "center" }}
         >
-         Bienvenido, registrate para realizar tu primera recolección
+          Bienvenido, registrate para realizar tu primera recolección
         </Typography>
-        <Stack direction="row" gap={2}> 
-          <TextField fullWidth label="Nombre/Razón Social" variant="outlined" defaultValue="Small"
-          size="small" />
-          <TextField fullWidth label="Cc/Nit" variant="outlined" defaultValue="Small"
-          size="small" />
+        <Stack direction="row" gap={2}>
+          <TextField fullWidth label="Nombre/Razón Social" variant="outlined" defaultValue=""
+            size="small" />
+          <TextField fullWidth label="Cc/Nit" variant="outlined" defaultValue=""
+            size="small" />
         </Stack>
-        <Stack direction="row" gap={2} > 
-          <TextField fullWidth label="Correo Electrónico" variant="outlined" defaultValue="Small"
-          size="small" />
-          <TextField fullWidth label="Número de Teléfono" variant="outlined" defaultValue="Small"
-          size="small" />
+        <Stack direction="row" gap={2} >
+          <TextField fullWidth label="Correo Electrónico" variant="outlined" defaultValue=""
+            size="small" />
+          <TextField fullWidth label="Número de Teléfono" variant="outlined" defaultValue=""
+            size="small" />
         </Stack>
-        <Stack direction="row" gap={2} > 
-          <TextField fullWidth label="Dirección" variant="outlined" defaultValue="Small"
-          size="small" />
+        <Stack direction="row" gap={2} >
+          <TextField fullWidth label="Dirección" variant="outlined" defaultValue=""
+            size="small" />
         </Stack>
-       
-        <Button fullWidth variant="contained" color="primary" sx={{ py: 2}} onClick={handleRedirectToSignUpTwo}>
+        <Stack direction="row" gap={2}>
+          <FormControl fullWidth size="small">
+            <InputLabel>Tipo de Cliente</InputLabel>
+            <Select label="Tipo de Cliente" defaultValue="">
+              <MenuItem value="juridico">Jurídico</MenuItem>
+              <MenuItem value="natural">Natural</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl fullWidth size="small">
+            <InputLabel>Tipo de Establecimiento</InputLabel>
+            <Select label="Tipo de Establecimiento" defaultValue="">
+              <MenuItem value="restaurante">Restaurante</MenuItem>
+              <MenuItem value="centro_comercial">Centro Comercial</MenuItem>
+              <MenuItem value="conjunto_residencial">Conjunto Residencial</MenuItem>
+            </Select>
+          </FormControl>
+        </Stack>
+
+        <Button fullWidth variant="contained" color="primary" sx={{ py: 2 }} onClick={handleRedirectToSignUpTwo}>
           Continuar
         </Button>
         <Button color="primary" onClick={handleRedirectToLogin}>
-        ¿Ya tienes una cuena? Ingresa Aquí
-              </Button>
+          ¿Ya tienes una cuena? Ingresa Aquí
+        </Button>
       </Box>
-      </Container>
+    </Container>
   );
 };
 
