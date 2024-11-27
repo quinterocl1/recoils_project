@@ -1,9 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
-  Button,
-  Container,
-  Link,
   TextField,
   Typography,
   Stack,
@@ -16,16 +13,13 @@ import {
   Drawer,
 } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
-import IconRight from "@mui/icons-material/ArrowForward";
-
 import { DataGrid } from '@mui/x-data-grid';
-import { useState } from 'react';
-import { Router, Routes, Route, useNavigate } from 'react-router-dom';
-
+import axios from 'axios';
 
 const ClientPage = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [activeComponent, setActiveComponent] = useState("info");
+  const [userData, setUserData] = useState(null);
 
   const toggleDrawer = (open) => (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -39,112 +33,171 @@ const ClientPage = () => {
     setIsDrawerOpen(false);
   };
 
-  const InfoComponent = () => (<Box
-    sx={{
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-    }}
-  >
-    <Stack gap={2}>
-      <Typography
-        variant="h6"
-        component="div"
-        sx={{ fontWeight: "bold", textAlign: "center" }}
-      >
-        Perfil Usuario
-      </Typography>
-      <Stack direction="row" gap={2}>
-        <Typography variant="body1"
-          component="div" sx={{ fontWeight: "bold" }}> Nombre/Rázon Social</Typography>
-        <Typography variant="body1"
-          component="div"> Galleticas Lucho</Typography>
-        <Typography component="div" sx={{ fontWeight: "bold" }}> Galleticas Lucho</Typography>
-        <Typography variant="body1"
-          component="div"> 1122334455</Typography>
-      </Stack>
-      <Stack direction="row" gap={2} >
-        <Typography variant="body1"
-          component="div" sx={{ fontWeight: "bold" }}> Dirección</Typography>
-        <Typography variant="body1"
-          component="div"> Calle 100</Typography>
-        <Typography variant="body1"
-          component="div" sx={{ fontWeight: "bold" }}> Correo Electrónico</Typography>
-        <Typography variant="body1"
-          component="div">   gl@correo.com.co</Typography>
-      </Stack>
-      <Stack direction="row" gap={2} >
-        <Typography variant="body1"
-          component="div" sx={{ fontWeight: "bold" }}> Teléfono</Typography>
-        <Typography variant="body1"
-          component="div"> 3333333333</Typography>
-      </Stack>
-    </Stack>
-  </Box>);
-  const RequestPickupComponent = () => (<Box
-    sx={{
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-    }}
-  >
-    <Stack gap={2}>
-      <Typography
-        variant="h6"
-        component="div"
-        sx={{ fontWeight: "bold", textAlign: 'left' }}
-      >
-        Solicitar Recolección
-      </Typography>
-      <Stack direction="row" gap={2}>
-        <TextField fullWidth label="Dirección" variant="outlined" defaultValue="Small"
-          size="small" />
-        <TextField fullWidth label="Número de Teléfono" variant="outlined" defaultValue="Small"
-          size="small" />
-      </Stack>
-      <Stack direction="row" gap={2} >
-        <TextField fullWidth label="Fecha de Recolección" variant="outlined" defaultValue="Small"
-          size="small" />
-        <TextField fullWidth label="Número de Pimpinas" variant="outlined" defaultValue="Small"
-          size="small" />
-      </Stack>
-      <Stack direction="row" gap={2} >
-        <TextField fullWidth label="Indicaciones Adicionales" variant="outlined" defaultValue="Small"
-          size="small" />
-      </Stack>
-    </Stack>
-  </Box>);
-  const HistoryComponent = () => (<Box
-    sx={{
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-    }}
-  >
-    <Stack gap={2}>
-      <Typography
-        variant="h6"
-        component="div"
-        sx={{ fontWeight: "bold", textAlign: 'left' }}
-      >
-        Historial de Recolección
-      </Typography>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 5,
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const token = document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1];
+      if (token) {
+        try {
+          const response = await axios.get('http://localhost:3000/api/clientes/profile', {
+            headers: {
+              Authorization: `Bearer ${token}`,
             },
-          },
-        }}
-        pageSizeOptions={[5]}
-        checkboxSelection
-        disableRowSelectionOnClick
-      />
-    </Stack>
-  </Box>);
+          });
+          setUserData(response.data);
+        } catch (error) {
+          console.error('Error al obtener los datos del usuario:', error);
+        }
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  const capitalizeFirstLetter = (str) => {
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
+
+  const InfoComponent = () => (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <Stack gap={2}>
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{ fontWeight: "bold", textAlign: "center" }}
+        >
+          Perfil Usuario
+        </Typography>
+        <Stack direction="row" gap={2}>
+          <Typography variant="body1" component="div" sx={{ fontWeight: "bold" }}>
+            Nombre/Rázon Social
+          </Typography>
+          <Typography variant="body1" component="div">
+            {userData?.nombre}
+          </Typography>
+        </Stack>
+        <Stack direction="row" gap={2}>
+          <Typography variant="body1" component="div" sx={{ fontWeight: "bold" }}>
+            Número de Identificación
+          </Typography>
+          <Typography variant="body1" component="div">
+            {userData?.numero_identificacion}
+          </Typography>
+        </Stack>
+        <Stack direction="row" gap={2}>
+          <Typography variant="body1" component="div" sx={{ fontWeight: "bold" }}>
+            Dirección
+          </Typography>
+          <Typography variant="body1" component="div">
+            {userData?.direccion}
+          </Typography>
+        </Stack>
+        <Stack direction="row" gap={2}>
+          <Typography variant="body1" component="div" sx={{ fontWeight: "bold" }}>
+            Correo Electrónico
+          </Typography>
+          <Typography variant="body1" component="div">
+            {userData?.email}
+          </Typography>
+        </Stack>
+        <Stack direction="row" gap={2}>
+          <Typography variant="body1" component="div" sx={{ fontWeight: "bold" }}>
+            Teléfono
+          </Typography>
+          <Typography variant="body1" component="div">
+            {userData?.contacto}
+          </Typography>
+        </Stack>
+        <Stack direction="row" gap={2}>
+          <Typography variant="body1" component="div" sx={{ fontWeight: "bold" }}>
+            Tipo de Cliente
+          </Typography>
+          <Typography variant="body1" component="div">
+            {capitalizeFirstLetter(userData?.tipo_cliente)}
+          </Typography>
+        </Stack>
+        <Stack direction="row" gap={2}>
+          <Typography variant="body1" component="div" sx={{ fontWeight: "bold" }}>
+            Tipo de Establecimiento
+          </Typography>
+          <Typography variant="body1" component="div">
+            {capitalizeFirstLetter(userData?.categoria)}
+          </Typography>
+        </Stack>
+      </Stack>
+    </Box>
+  );
+
+  const RequestPickupComponent = () => (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <Stack gap={2}>
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{ fontWeight: "bold", textAlign: 'left' }}
+        >
+          Solicitar Recolección
+        </Typography>
+        <Stack direction="row" gap={2}>
+          <TextField fullWidth label="Dirección" variant="outlined" defaultValue="Small" size="small" />
+          <TextField fullWidth label="Número de Teléfono" variant="outlined" defaultValue="Small" size="small" />
+        </Stack>
+        <Stack direction="row" gap={2}>
+          <TextField fullWidth label="Fecha de Recolección" variant="outlined" defaultValue="Small" size="small" />
+          <TextField fullWidth label="Número de Pimpinas" variant="outlined" defaultValue="Small" size="small" />
+        </Stack>
+        <Stack direction="row" gap={2}>
+          <TextField fullWidth label="Indicaciones Adicionales" variant="outlined" defaultValue="Small" size="small" />
+        </Stack>
+      </Stack>
+    </Box>
+  );
+
+  const HistoryComponent = () => (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <Stack gap={2}>
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{ fontWeight: "bold", textAlign: 'left' }}
+        >
+          Historial de Recolección
+        </Typography>
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 5,
+              },
+            },
+          }}
+          pageSizeOptions={[5]}
+          checkboxSelection
+          disableRowSelectionOnClick
+        />
+      </Stack>
+    </Box>
+  );
 
   const renderComponent = () => {
     switch (activeComponent) {
@@ -220,9 +273,7 @@ const ClientPage = () => {
     { id: 10, fechaSolicitud: '2024-10-10', direccion: 'Calle 76', nPimpinas: 9, conductor: 'Paola Álvarez', ccConductor: 90123456, placaVehiculo: 'BCD890', telefono: 3221234567, indicaciones: 'Confirmar antes de salir' },
   ];
 
-
   return (
-
     <>
       <AppBar position="fixed" color="background">
         <Toolbar>
@@ -277,7 +328,7 @@ const ClientPage = () => {
         {renderComponent()}
       </div>
     </>
-  )
-}
+  );
+};
 
 export default ClientPage;

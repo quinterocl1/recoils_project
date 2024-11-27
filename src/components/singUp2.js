@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/img-redundant-alt */
 import React, { useState } from "react";
 import {
   Box,
@@ -47,10 +48,19 @@ const SignUpTwoPage = () => {
       };
 
       console.log("Datos enviados al backend:", completeUserData); // Agrega este console.log
-      await authService.register(completeUserData); // Enviar todos los datos al endpoint
-      navigate("/clientPage");
+      const response = await authService.register(completeUserData); // Enviar todos los datos al endpoint
+      if (response.status === 200) {
+        const token = response.data.access_token; // Suponiendo que el token se devuelve en response.data.access_token
+        const expires = new Date(Date.now() + 3600 * 1000).toUTCString(); // 1 hora en milisegundos
+        document.cookie = `token=${token}; path=/; expires=${expires}`; // Almacena el token en las cookies con duración de 1 hora
+        updateUserData({ token }); // Guarda el token en el contexto de autenticación
+        navigate('/clientPage'); // Redirige al usuario a clientPage
+      } else {
+        // Maneja el caso de registro fallido
+        console.error('Error al registrar:', response.data.message);
+      }
     } catch (error) {
-      console.error("Error al registrar:", error);
+      console.error('Error al registrar:', error.response ? error.response.data : error.message);
     }
   };
 
