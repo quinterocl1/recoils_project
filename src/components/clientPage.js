@@ -11,10 +11,16 @@ import {
   ListItem,
   List,
   Drawer,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import { DataGrid } from '@mui/x-data-grid';
 import axios from 'axios';
+import AddressesComponent from './AddressComponenet';
 
 const ClientPage = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -92,14 +98,6 @@ const ClientPage = () => {
         </Stack>
         <Stack direction="row" gap={2}>
           <Typography variant="body1" component="div" sx={{ fontWeight: "bold" }}>
-            Dirección
-          </Typography>
-          <Typography variant="body1" component="div">
-            {userData?.direccion}
-          </Typography>
-        </Stack>
-        <Stack direction="row" gap={2}>
-          <Typography variant="body1" component="div" sx={{ fontWeight: "bold" }}>
             Correo Electrónico
           </Typography>
           <Typography variant="body1" component="div">
@@ -133,37 +131,150 @@ const ClientPage = () => {
       </Stack>
     </Box>
   );
+  const RequestPickupComponent = () => {
+    const [addresses, setAddresses] = useState([]);
+    const [selectedAddress, setSelectedAddress] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [pickupDate, setPickupDate] = useState('');
+    const [numberOfContainers, setNumberOfContainers] = useState('');
+    const [additionalInstructions, setAdditionalInstructions] = useState('');
 
-  const RequestPickupComponent = () => (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-    >
-      <Stack gap={2}>
+    useEffect(() => {
+      const fetchAddresses = async () => {
+        const token = document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1];
+        try {
+          const response = await axios.get('http://localhost:3000/api/direcciones', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          console.log('Direcciones obtenidas:', response.data); // Verificar la respuesta del backend
+
+          setAddresses(response.data);
+        } catch (error) {
+          console.error('Error al obtener las direcciones:', error);
+        }
+      };
+
+      fetchAddresses();
+    }, []);
+
+    const handleSubmit = async (event) => {
+      event.preventDefault();
+      const token = document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1];
+      try {
+        await axios.post('http://localhost:3000/api/solicitudes_recoleccion',
+          {
+            id_direccion: selectedAddress,
+            fecha_programada: pickupDate,
+            numero_pinpinas: numberOfContainers,
+            detalles_adicionales: additionalInstructions
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        alert('Solicitud de recolección creada con éxito');
+        // Limpiar el formulario después de enviar
+        setSelectedAddress('');
+        setPhoneNumber('');
+        setPickupDate('');
+        setNumberOfContainers('');
+        setAdditionalInstructions('');
+      } catch (error) {
+        console.error('Error al crear la solicitud de recolección:', error);
+        alert('Error al crear la solicitud de recolección');
+      }
+    };
+
+    return (
+      <Box
+        component="form"
+        onSubmit={handleSubmit}
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          maxWidth: 400,
+          margin: "auto",
+        }}
+      >
         <Typography
           variant="h6"
-          component="div"
-          sx={{ fontWeight: "bold", textAlign: 'left' }}
+          component="h2"
+          sx={{ fontWeight: "bold", textAlign: 'left', mb: 2 }}
         >
           Solicitar Recolección
         </Typography>
-        <Stack direction="row" gap={2}>
-          <TextField fullWidth label="Dirección" variant="outlined" defaultValue="Small" size="small" />
-          <TextField fullWidth label="Número de Teléfono" variant="outlined" defaultValue="Small" size="small" />
+        <Stack gap={2}>
+          <FormControl fullWidth sx={{ mb: 2 }}>
+            <InputLabel id="address-select-label">Dirección</InputLabel>
+            <Select
+              labelId="address-select-label"
+              value={selectedAddress}
+              label="Dirección"
+              onChange={(e) => setSelectedAddress(e.target.value)}
+              required
+            >
+              {addresses.map((address) => (
+                <MenuItem key={address.id} value={address.id}>
+                  {address.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <TextField
+            fullWidth
+            label="Número de Teléfono"
+            variant="outlined"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
+            sx={{ mb: 2 }}
+            required
+          />
+          <TextField
+            fullWidth
+            label="Fecha de Recolección"
+            variant="outlined"
+            value={pickupDate}
+            onChange={(e) => setPickupDate(e.target.value)}
+            sx={{ mb: 2 }}
+            required
+          />
+          <TextField
+            fullWidth
+            label="Número de Pimpinas"
+            variant="outlined"
+            type="number"
+            value={numberOfContainers}
+            onChange={(e) => setNumberOfContainers(e.target.value)}
+            sx={{ mb: 2 }}
+            required
+          />
+          <TextField
+            fullWidth
+            label="Indicaciones Adicionales"
+            variant="outlined"
+            multiline
+            rows={4}
+            value={additionalInstructions}
+            onChange={(e) => setAdditionalInstructions(e.target.value)}
+            sx={{ mb: 2 }}
+          />
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            sx={{ mt: 2 }}
+          >
+            Crear Solicitud
+          </Button>
         </Stack>
-        <Stack direction="row" gap={2}>
-          <TextField fullWidth label="Fecha de Recolección" variant="outlined" defaultValue="Small" size="small" />
-          <TextField fullWidth label="Número de Pimpinas" variant="outlined" defaultValue="Small" size="small" />
-        </Stack>
-        <Stack direction="row" gap={2}>
-          <TextField fullWidth label="Indicaciones Adicionales" variant="outlined" defaultValue="Small" size="small" />
-        </Stack>
-      </Stack>
-    </Box>
-  );
+      </Box>
+    );
+  };
 
   const HistoryComponent = () => (
     <Box
@@ -207,6 +318,8 @@ const ClientPage = () => {
         return <RequestPickupComponent />;
       case "history":
         return <HistoryComponent />;
+      case "addresses":
+        return <AddressesComponent />;
       default:
         return <InfoComponent />;
     }
@@ -315,6 +428,9 @@ const ClientPage = () => {
         <List>
           <ListItem button onClick={() => handleListItemClick("info")}>
             <ListItemText primary="Información" />
+          </ListItem>
+          <ListItem button onClick={() => handleListItemClick("addresses")}>
+            <ListItemText primary="Direcciones" />
           </ListItem>
           <ListItem button onClick={() => handleListItemClick("requestPickup")}>
             <ListItemText primary="Solicitar Recolección" />
