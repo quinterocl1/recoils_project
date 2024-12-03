@@ -16,6 +16,10 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { DataGrid } from '@mui/x-data-grid';
 import axios from 'axios';
 
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
 const ClientPage = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [activeComponent, setActiveComponent] = useState("info");
@@ -140,27 +144,59 @@ const ClientPage = () => {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
+        padding: 4,
+        maxWidth: 600,
+        margin: "auto",
       }}
     >
-      <Stack gap={2}>
-        <Typography
-          variant="h6"
-          component="div"
-          sx={{ fontWeight: "bold", textAlign: 'left' }}
-        >
-          Solicitar Recolección
-        </Typography>
-        <Stack direction="row" gap={2}>
-          <TextField fullWidth label="Dirección" variant="outlined" defaultValue="Small" size="small" />
-          <TextField fullWidth label="Número de Teléfono" variant="outlined" defaultValue="Small" size="small" />
+      <Typography
+        variant="h6"
+        component="div"
+        sx={{ fontWeight: "bold", textAlign: "center", marginBottom: 3 }}
+      >
+        Solicitar Recolección
+      </Typography>
+      <Stack gap={3} sx={{ width: "100%" }}>
+        <Stack direction='row' gap={2}>
+          <TextField fullWidth label="Dirección" variant="outlined" size="small" />
+          <TextField
+            fullWidth
+            label="Número de Teléfono"
+            variant="outlined"
+            size="small"
+          />
         </Stack>
-        <Stack direction="row" gap={2}>
-          <TextField fullWidth label="Fecha de Recolección" variant="outlined" defaultValue="Small" size="small" />
-          <TextField fullWidth label="Número de Pimpinas" variant="outlined" defaultValue="Small" size="small" />
-        </Stack>
-        <Stack direction="row" gap={2}>
-          <TextField fullWidth label="Indicaciones Adicionales" variant="outlined" defaultValue="Small" size="small" />
-        </Stack>
+  
+        <Stack direction="row" gap={2} sx={{ width: "100%" }}>
+    <Stack sx={{ flex: 1 }}>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DatePicker
+          label="Fecha de recolección"
+          sx={{
+            width: "100%", 
+            "& .MuiInputBase-root": {
+              height: "40px",
+            },
+          }}
+        />
+      </LocalizationProvider>
+    </Stack>
+    <TextField
+      label="Número de Pimpinas"
+      variant="outlined"
+      size="small"
+      sx={{ flex: 1 }}
+    />
+  </Stack>
+  
+  
+        <TextField
+          fullWidth
+          label="Indicaciones Adicionales"
+          variant="outlined"
+          multiline
+          rows={3}
+        />
       </Stack>
     </Box>
   );
